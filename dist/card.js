@@ -257,7 +257,7 @@ var card =
 	      month = QJ.val(this.$expiryInput[0]);
 	      year = QJ.val(this.$expiryInput[1]);
 	    }
-	    if (!Payment.fns.validateCardExpiry(month, year)) {
+	    if (!Payment.fns.validateCardExpiry(month, year, this.$expiryInput[0].dataset.useDateExpire || false)) {
 	      QJ.addClass(this.$expiryInput, 'error');
 	      QJ.addClass(this.$expiryInput, 'jp-card-invalid');
 	      isValid = false;
@@ -306,12 +306,13 @@ var card =
 	  };
 
 	  Card.prototype.validToggler = function(validatorName) {
-	    var isValid;
+	    var isValid, useDateExpire;
 	    if (validatorName === "cardExpiry") {
+	      useDateExpire = this.$expiryInput[0].dataset.useDateExpire || false;
 	      isValid = function(val) {
 	        var objVal;
 	        objVal = Payment.fns.cardExpiryVal(val);
-	        return Payment.fns.validateCardExpiry(objVal.month, objVal.year);
+	        return Payment.fns.validateCardExpiry(objVal.month, objVal.year, useDateExpire);
 	      };
 	    } else if (validatorName === "cardCVC") {
 	      isValid = (function(_this) {
@@ -1377,7 +1378,7 @@ var card =
 	    setPreviewValue(target);
 	    month = value.substring(0, 2);
 	    year = value.substring(2);
-	    if (Payment.fns.validateCardExpiry(month, year)) {
+	    if (Payment.fns.validateCardExpiry(month, year, target.dataset.useDateExpire || false)) {
 	      jumpToNext(target);
 	    } else {
 	      markAsInvalid(target);
@@ -1400,7 +1401,7 @@ var card =
 	    year = value.substring(2);
 	    setNewValue(target, month + " / " + year);
 	    if (value.length === 4) {
-	      if (Payment.fns.validateCardExpiry(month, year)) {
+	      if (Payment.fns.validateCardExpiry(month, year, target.dataset.useDateExpire || false)) {
 	        jumpToNext(target);
 	      } else {
 	        markAsInvalid(target);
@@ -1755,8 +1756,11 @@ var card =
 	      }
 	      return (ref = num.length, indexOf.call(card.length, ref) >= 0) && (card.luhn === false || luhnCheck(num));
 	    },
-	    validateCardExpiry: function(month, year) {
+	    validateCardExpiry: function(month, year, useDateExpire) {
 	      var currentTime, expiry, prefix, ref, ref1;
+	      if (useDateExpire == null) {
+	        useDateExpire = false;
+	      }
 	      if (typeof month === 'object' && 'month' in month) {
 	        ref = month, month = ref.month, year = ref.year;
 	      } else if (typeof month === 'string' && indexOf.call(month, '/') >= 0) {
@@ -1782,11 +1786,17 @@ var card =
 	        prefix = prefix.toString().slice(0, 2);
 	        year = prefix + year;
 	      }
-	      expiry = new Date(year, month);
-	      currentTime = new Date;
-	      expiry.setMonth(expiry.getMonth() - 1);
-	      expiry.setMonth(expiry.getMonth() + 1, 1);
-	      return expiry > currentTime;
+	      if (!(year && year > 2000)) {
+	        return false;
+	      }
+	      if (useDateExpire) {
+	        expiry = new Date(year, month);
+	        currentTime = new Date;
+	        expiry.setMonth(expiry.getMonth() - 1);
+	        expiry.setMonth(expiry.getMonth() + 1, 1);
+	        return expiry > currentTime;
+	      }
+	      return true;
 	    },
 	    validateCardCVC: function(cvc, type) {
 	      var ref, ref1;
