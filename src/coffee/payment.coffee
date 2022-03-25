@@ -342,7 +342,7 @@ inputExpire = (e) ->
     setPreviewValue target
     month = value.substring(0,2)
     year = value.substring(2)
-    if Payment.fns.validateCardExpiry(month, year)
+    if Payment.fns.validateCardExpiry(month, year, target.dataset.useDateExpire || true)
       jumpToNext target
     else
       markAsInvalid target
@@ -360,7 +360,7 @@ inputExpire = (e) ->
     year = value.substring(2)
     setNewValue target, "#{month} / #{year}"
     if value.length == 4
-      if Payment.fns.validateCardExpiry(month, year)
+      if Payment.fns.validateCardExpiry(month, year, target.dataset.useDateExpire || true)
         jumpToNext target
       else
         markAsInvalid target
@@ -626,7 +626,7 @@ class Payment
 
       num.length in card.length and
         (card.luhn is false or luhnCheck(num))
-    validateCardExpiry: (month, year) ->
+    validateCardExpiry: (month, year, useDateExpire = true) ->
       # Allow passing an object
       if typeof month is 'object' and 'month' of month
         {month, year} = month
@@ -650,18 +650,23 @@ class Payment
         prefix = prefix.toString()[0..1]
         year   = prefix + year
 
-      expiry      = new Date(year, month)
-      currentTime = new Date
+      return false unless year and year > 2000
 
-      # Months start from 0 in JavaScript
-      expiry.setMonth(expiry.getMonth() - 1)
+      if useDateExpire
+        expiry      = new Date(year, month)
+        currentTime = new Date
 
-      # The cc expires at the end of the month,
-      # so we need to make the expiry the first day
-      # of the month after
-      expiry.setMonth(expiry.getMonth() + 1, 1)
+        # Months start from 0 in JavaScript
+        expiry.setMonth(expiry.getMonth() - 1)
 
-      expiry > currentTime
+        # The cc expires at the end of the month,
+        # so we need to make the expiry the first day
+        # of the month after
+        expiry.setMonth(expiry.getMonth() + 1, 1)
+
+        return expiry > currentTime
+
+      return true
     validateCardCVC: (cvc, type) ->
       cvc = QJ.trim(cvc)
       return false unless /^\d+$/.test(cvc)
