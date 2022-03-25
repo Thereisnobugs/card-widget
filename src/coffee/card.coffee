@@ -212,7 +212,7 @@ class Card
       month = QJ.val(@$expiryInput[0])
       year = QJ.val(@$expiryInput[1])
 
-    if not Payment.fns.validateCardExpiry(month, year, @$expiryInput[0].dataset.useDateExpire || true)
+    if not Payment.fns.validateCardExpiry(month, year, @$expiryInput[0].dataset.ignoreExpireDate || false)
       QJ.addClass(@$expiryInput, 'error')
       QJ.addClass(@$expiryInput, 'jp-card-invalid')
       isValid = false
@@ -247,10 +247,10 @@ class Card
 
   validToggler: (validatorName) ->
     if validatorName == "cardExpiry"
-      useDateExpire = @$expiryInput[0].dataset.useDateExpire || true
+      ignoreExpireDate = @$expiryInput[0].dataset.ignoreExpireDate || false
       isValid = (val) ->
         objVal = Payment.fns.cardExpiryVal val
-        Payment.fns.validateCardExpiry objVal.month, objVal.year, useDateExpire
+        Payment.fns.validateCardExpiry objVal.month, objVal.year, ignoreExpireDate
     else if validatorName == "cardCVC"
       isValid = (val) => Payment.fns.validateCardCVC val, @cardType
     else if validatorName == "cardNumber"
