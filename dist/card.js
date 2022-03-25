@@ -257,7 +257,7 @@ var card =
 	      month = QJ.val(this.$expiryInput[0]);
 	      year = QJ.val(this.$expiryInput[1]);
 	    }
-	    if (!Payment.fns.validateCardExpiry(month, year, this.$expiryInput[0].dataset.useDateExpire || false)) {
+	    if (!Payment.fns.validateCardExpiry(month, year, this.$expiryInput[0].dataset.useDateExpire || true)) {
 	      QJ.addClass(this.$expiryInput, 'error');
 	      QJ.addClass(this.$expiryInput, 'jp-card-invalid');
 	      isValid = false;
@@ -308,7 +308,7 @@ var card =
 	  Card.prototype.validToggler = function(validatorName) {
 	    var isValid, useDateExpire;
 	    if (validatorName === "cardExpiry") {
-	      useDateExpire = this.$expiryInput[0].dataset.useDateExpire || false;
+	      useDateExpire = this.$expiryInput[0].dataset.useDateExpire || true;
 	      isValid = function(val) {
 	        var objVal;
 	        objVal = Payment.fns.cardExpiryVal(val);
@@ -1378,7 +1378,7 @@ var card =
 	    setPreviewValue(target);
 	    month = value.substring(0, 2);
 	    year = value.substring(2);
-	    if (Payment.fns.validateCardExpiry(month, year, target.dataset.useDateExpire || false)) {
+	    if (Payment.fns.validateCardExpiry(month, year, target.dataset.useDateExpire || true)) {
 	      jumpToNext(target);
 	    } else {
 	      markAsInvalid(target);
@@ -1401,7 +1401,7 @@ var card =
 	    year = value.substring(2);
 	    setNewValue(target, month + " / " + year);
 	    if (value.length === 4) {
-	      if (Payment.fns.validateCardExpiry(month, year, target.dataset.useDateExpire || false)) {
+	      if (Payment.fns.validateCardExpiry(month, year, target.dataset.useDateExpire || true)) {
 	        jumpToNext(target);
 	      } else {
 	        markAsInvalid(target);
@@ -1759,7 +1759,7 @@ var card =
 	    validateCardExpiry: function(month, year, useDateExpire) {
 	      var currentTime, expiry, prefix, ref, ref1;
 	      if (useDateExpire == null) {
-	        useDateExpire = false;
+	        useDateExpire = true;
 	      }
 	      if (typeof month === 'object' && 'month' in month) {
 	        ref = month, month = ref.month, year = ref.year;
