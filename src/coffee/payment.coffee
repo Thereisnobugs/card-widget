@@ -342,7 +342,7 @@ inputExpire = (e) ->
     setPreviewValue target
     month = value.substring(0,2)
     year = value.substring(2)
-    if Payment.fns.validateCardExpiry(month, year, target.dataset.ignoreExpireDate || false)
+    if Payment.fns.validateCardExpiry(month, year, QJ.data(target, 'ignore-date-expire'))
       jumpToNext target
     else
       markAsInvalid target
@@ -360,7 +360,7 @@ inputExpire = (e) ->
     year = value.substring(2)
     setNewValue target, "#{month} / #{year}"
     if value.length == 4
-      if Payment.fns.validateCardExpiry(month, year, target.dataset.ignoreExpireDate || false)
+      if Payment.fns.validateCardExpiry(month, year, QJ.data(target, 'ignore-date-expire'))
         jumpToNext target
       else
         markAsInvalid target
@@ -626,7 +626,7 @@ class Payment
 
       num.length in card.length and
         (card.luhn is false or luhnCheck(num))
-    validateCardExpiry: (month, year, ignoreExpireDate = false) ->
+    validateCardExpiry: (month, year, ignoreDateExpire = false) ->
       # Allow passing an object
       if typeof month is 'object' and 'month' of month
         {month, year} = month
@@ -652,7 +652,7 @@ class Payment
 
       return false unless year and year > 2000
 
-      if ignoreExpireDate
+      if ignoreDateExpire
         return true;
 
       expiry      = new Date(year, month)

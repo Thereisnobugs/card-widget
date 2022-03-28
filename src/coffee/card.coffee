@@ -142,6 +142,7 @@ class Card
       QJ.data(QJ.first(@$expiryInput), 'prev-input', prevInputForExpiry)
       QJ.data(QJ.last(@$expiryInput), 'prev-input', QJ.first(@$expiryInput))
 
+    QJ.data(QJ.first(@$expiryInput), 'ignore-date-expire', @options.ignoreDateExpire || false)
 
     if @options.formatting
       Payment.formatCardNumber(@$numberInput)
@@ -176,6 +177,7 @@ class Card
 
     expiryFilters = [(val) -> val.replace /(\s+)/g, '']
     expiryFilters.push @validToggler('cardExpiry')
+    QJ.on @$expiryInput, 'change', @handle('setIgnoreDateExpire')
 
     bindVal @$expiryInput, @$expiryDisplay,
         join: (text) ->
@@ -212,7 +214,7 @@ class Card
       month = QJ.val(@$expiryInput[0])
       year = QJ.val(@$expiryInput[1])
 
-    if not Payment.fns.validateCardExpiry(month, year, @$expiryInput[0].dataset.ignoreExpireDate || false)
+    if not Payment.fns.validateCardExpiry(month, year, QJ.data(QJ.first(@$expiryInput), 'ignore-date-expire'))
       QJ.addClass(@$expiryInput, 'error')
       QJ.addClass(@$expiryInput, 'jp-card-invalid')
       isValid = false
@@ -247,10 +249,9 @@ class Card
 
   validToggler: (validatorName) ->
     if validatorName == "cardExpiry"
-      ignoreExpireDate = @$expiryInput[0].dataset.ignoreExpireDate || false
       isValid = (val) ->
         objVal = Payment.fns.cardExpiryVal val
-        Payment.fns.validateCardExpiry objVal.month, objVal.year, ignoreExpireDate
+        Payment.fns.validateCardExpiry objVal.month, objVal.year, @ignoreDateExpire
     else if validatorName == "cardCVC"
       isValid = (val) => Payment.fns.validateCardCVC val, @cardType
     else if validatorName == "cardNumber"
@@ -280,6 +281,8 @@ class Card
       val.replace /\d/g, mask
 
   handlers:
+    setIgnoreDateExpire: ->
+      @ignoreDateExpire = QJ.data(QJ.first(@$expiryInput), 'ignore-date-expire')
     setCardType: ($el, e) ->
       cardType = e.data
       unless QJ.hasClass @$card, cardType
