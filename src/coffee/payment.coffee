@@ -145,6 +145,38 @@ cards = [
     cvcLength: [3]
     luhn: true
   }
+  {
+    type: 'ungr0'
+    pattern: /^(3562|3565|5614|6234|6291|6711|6765|6768|6773|9051|9112|9762|9990)/
+    format: defaultFormat
+    length: [16]
+    cvcLength: [3]
+    luhn: true
+  }
+  {
+    type: 'ungr1'
+    pattern: /^505827/
+    format: defaultFormat
+    length: [19]
+    cvcLength: [3]
+    luhn: true
+  }
+  {
+    type: 'ungr2'
+    pattern: /^(676347|676454|676907|9417)/
+    format: defaultFormat
+    length: [16, 19]
+    cvcLength: [3]
+    luhn: true
+  }
+  {
+    type: 'ungr3'
+    pattern: /^86000/
+    format: defaultFormat
+    length: [15, 16]
+    cvcLength: [3]
+    luhn: true
+  }
 ]
 
 cardFromNumber = (num) ->
