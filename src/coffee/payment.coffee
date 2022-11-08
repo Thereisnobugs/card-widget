@@ -170,11 +170,19 @@ cards = [
     luhn: true
   }
   {
-    type: 'ungr3'
-    pattern: /^86000/
-    format: defaultFormat
-    length: [15, 16]
-    cvcLength: [3]
+    type: 'uzcard',
+    pattern: /^8600/,
+    format: defaultFormat,
+    length: [16],
+    cvcLength: [3],
+    luhn: true
+  }
+  {
+    type: 'humo',
+    pattern: /^9860/,
+    format: defaultFormat,
+    length: [16],
+    cvcLength: [3],
     luhn: true
   }
 ]
