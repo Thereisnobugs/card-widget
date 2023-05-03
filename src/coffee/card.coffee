@@ -126,13 +126,16 @@ class Card
       console.error "Card can't find a #{name} in your form." if !obj.length and @options.debug
       this["$#{name}"] = obj
 
-    QJ.data(@$numberInput, 'next-input', if @$nameInput?.length then QJ.first(@$nameInput) else QJ.first(@$expiryInput))
-    QJ.data(@$nameInput, 'next-input', QJ.first(@$expiryInput))
+    QJ.data(@$numberInput, 'next-input', QJ.first(@$expiryInput))
     if (@$expiryInput.length == 1)
       QJ.data(@$expiryInput, 'next-input', QJ.first(@$cvcInput))
     else
       QJ.data(QJ.first(@$expiryInput), 'next-input', QJ.last(@$expiryInput))
       QJ.data(QJ.last(@$expiryInput), 'next-input', QJ.first(@$cvcInput))
+
+    if (@$nameInput.length == 1)
+        QJ.data(@$cvcInput, 'next-input', QJ.first(@$nameInput))
+        QJ.data(@$nameInput, 'prev-input', QJ.last(@$cvcInput))
 
     QJ.data(@$cvcInput, 'prev-input', QJ.last(@$expiryInput))
     prevInputForExpiry = if @$nameInput.length then QJ.first(@$nameInput) else QJ.last(@$numberInput)

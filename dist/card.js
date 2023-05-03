@@ -137,7 +137,7 @@ var card =
 	  }
 
 	  Card.prototype.render = function() {
-	    var $cardContainer, baseWidth, name, obj, prevInputForExpiry, ref, ref1, ref2, selector, ua;
+	    var $cardContainer, baseWidth, name, obj, prevInputForExpiry, ref, ref1, selector, ua;
 	    QJ.append(this.$container, this.template(this.cardTemplate, extend({}, this.options.messages, this.options.placeholders)));
 	    ref = this.options.cardSelectors;
 	    for (name in ref) {
@@ -154,13 +154,16 @@ var card =
 	      }
 	      this["$" + name] = obj;
 	    }
-	    QJ.data(this.$numberInput, 'next-input', ((ref2 = this.$nameInput) != null ? ref2.length : void 0) ? QJ.first(this.$nameInput) : QJ.first(this.$expiryInput));
-	    QJ.data(this.$nameInput, 'next-input', QJ.first(this.$expiryInput));
+	    QJ.data(this.$numberInput, 'next-input', QJ.first(this.$expiryInput));
 	    if (this.$expiryInput.length === 1) {
 	      QJ.data(this.$expiryInput, 'next-input', QJ.first(this.$cvcInput));
 	    } else {
 	      QJ.data(QJ.first(this.$expiryInput), 'next-input', QJ.last(this.$expiryInput));
 	      QJ.data(QJ.last(this.$expiryInput), 'next-input', QJ.first(this.$cvcInput));
+	    }
+	    if (this.$nameInput.length === 1) {
+	      QJ.data(this.$cvcInput, 'next-input', QJ.first(this.$nameInput));
+	      QJ.data(this.$nameInput, 'prev-input', QJ.last(this.$cvcInput));
 	    }
 	    QJ.data(this.$cvcInput, 'prev-input', QJ.last(this.$expiryInput));
 	    prevInputForExpiry = this.$nameInput.length ? QJ.first(this.$nameInput) : QJ.last(this.$numberInput);
